@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Molecules animation on js</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+</head>
+<body>
+
+<canvas id="game" width="500" height="500"></canvas>
+
+<script>
+    let game;
+
+    window.onload = function() {
+        game = new Game().start();
+        game.loadBalls();
+    }
+
+    function Game() {
+        this.FPS = 60;
+        this.speed = 7;
+
+        const colors = [
+            'grey', 'yellow', 'orange', 'brown', 'green', 'gold', 'darkred'
+        ];
+
+        this.canvas = getCanvas('game');
+        this.context = this.canvas.getContext('2d');
+
+        this.balls = [];
+
+        const that = this;  //TODO ne ponyal zachem
+
+        const resizeCanvas = function() {
+            const c = getCanvas('game');
+            c.width = window.innerWidth - 18;
+            c.height = window.innerHeight-18;
+        }
+
+        const onWindowResize = function() {
+            resizeCanvas();
+        }
+
+        const eventHandlers = function() {
+            window.onresize  = onWindowResize;
+        };
+
+        const drawBalls = function() {
+            for (let i = 0; i < that.balls.length; i++) {
+                const ball = that.balls[i];
+
+                ball.x = ball.x + ball.vx;
+                ball.y = ball.y + ball.vy;
+
+                if (ball.x + ball.r >= that.canvas.width) {
+                    ball.vx = -ball.vx;
+                }
+                if (ball.x - ball.r <= 0) {
+                    ball.vx = -ball.vx;
+                }
+                if (ball.y + ball.r >= that.canvas.height) {
+                    ball.vy = -ball.vy;
+                }
+                if (ball.y - ball.r <= 0) {
+                    ball.vy = -ball.vy;
+                }
+
+
+                that.context.beginPath();
+                that.context.arc(ball.x, ball.y, ball.r, 0, 2*Math.PI, false);
+                that.context.fillStyle = ball.color;
+                that.context.fill();
+            }
+        }
+
+        const gameStep = function() {
+            that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
+
+            drawBalls();
+        }
+
+
+        const gameLoop = function(fn) {
+            let then = +new Date();
+
+            const interval = 1000 / that.FPS;
+
+
+            window.requestAnimationFrame = window.requestAnimationFrame
+                || window.wekitRequestAnimationFrame
+                || window.mozRequestAnimationFrame
+                || window.oRequestAnimationFrame
+                || window.msRequestAnimationFrame
+                || function(fn) {
+                    return window.setTimeout(fn, 1000/ 60);
+                };
+
+            return (function loop() {
+                window.requestAnimationFrame(loop);
+
+                const now = +new Date();
+                const delta = now - then;
+
+                if (delta > interval) {
+                    then = now - (delta % interval);
+                    fn();
+                }
+            }()); //TODO зачем тут ()?
+        };
+
+        this.loadBalls = function() {
+            for (let i=0; i<1000; i++) {
+                that.balls.push({
+                    x: Math.ceil(Math.random()*that.canvas.width),
+                    y: Math.ceil(Math.random()*that.canvas.height),
+                    r: 20,
+                    vx: Math.floor(Math.random()*that.speed),
+                    vy: Math.floor(Math.random()*that.speed),
+                    color: colors[Math.floor(Math.random()*colors.length)]
+                })
+            }
+        }
+
+        this.start = function() {
+            console.log('game started...');
+
+            eventHandlers();
+            resizeCanvas();
+
+            gameLoop(gameStep);
+
+            return that;
+        };
+    }
+    function getCanvas(id) { return document.getElementById(id); }
+</script>
+
+</body>
+</html>

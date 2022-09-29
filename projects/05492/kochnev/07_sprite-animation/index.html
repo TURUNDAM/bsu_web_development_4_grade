@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Walking sprite</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+            display: block;
+        }
+    </style>
+</head>
+<body onload="gameStart()" id="body">
+<h1>test</h1>
+<canvas id="game" width="500" height="500"></canvas>
+<div>x: <span id="x"></span></div>
+<div>speed: <span id="speed"></span></div>
+<div>fps: <span id="fps"></span></div>
+    <div id="datetime"></div>
+  <!--  <div id="progress"></div>
+ <div id="timestart"></div>
+ <div id="now"></div>
+ <div id="then"></div>
+ <div id="delta"></div> --->
+
+<script type="text/javascript">
+    function getElem(id) { return document.getElementById(id); }
+    const canvas = getElem('game');
+    const context = canvas.getContext('2d');
+    let direction = 'RIGHT';
+
+
+    const boy = loadImage('sprites.png', 108, 140, 8);
+
+    let x = 0, y = 100;
+    let speed = 15;
+    const FPS = 15;
+    const startTime = 0;
+
+    function gameStart() {
+        gameCanvasInit();
+        gameLoop(gameStep, FPS);
+        gameEvents();
+    }
+
+    function gameLoop(fn, fps) {
+        let then = +new Date();
+        fps = fps || 60;
+
+        let interval = 1000 / fps;
+
+        const requestAnimationFrame = window.requestAnimationFrame
+            || window.wekitRequestAnimationFrame
+            || window.mozRequestAnimationFrame
+            || window.oRequestAnimationFrame
+            || window.msRequestAnimationFrame
+            || function(fn) {
+                return window.setTimeout(fn, 1000/ 60);
+            };
+
+        return (function loop() {
+            requestAnimationFrame(loop);
+
+            const now = +new Date();
+            const delta = now - then;
+             getElem('fps').innerHTML = fps;
+             getElem('timestart').innerHTML = then;
+             getElem('now').innerHTML = now;
+             getElem('delta').innerHTML = delta;
+
+            if (delta > interval) {
+                then = now - (delta % interval);
+
+                fn();
+            }
+        }());
+    }
+
+
+    function gameStep() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (direction === 'RIGHT') {
+            if (x + boy.width > canvas.width) {
+                x-=speed;
+                direction = 'LEFT';
+            }
+            else {
+                x+=speed;
+            }
+        }
+        else {
+            if (x <= 0) {
+                x+=speed;
+                direction = 'RIGHT';
+            }
+            else {
+                x-=speed;
+            }
+        }
+
+
+        getElem('x').innerHTML = x;
+        getElem('speed').innerHTML = speed;
+        getElem('fps').innerHTML = FPS;
+
+
+        drawImage(context, boy, x, y);
+
+
+        drawRect(context, 10, y+133, getElem('game').width-18, 10);
+    }
+
+
+
+    function drawRect(ctx, x, y, w, h) {
+        ctx.fillStyle = '#940';
+        ctx.fillRect(x, y, w, h);
+    }
+
+    function drawImage(ctx, img, x, y) {
+        img.num = (img.num >= img.frames) ? 1 : img.num+1;
+
+        yOffset = (direction === 'LEFT') ? 140 : 0;
+
+        ctx.drawImage(img.dom, img.width*(img.num-1), yOffset, img.width, img.height, x, y, img.width, img.height);
+    }
+
+    function loadImage(path, w, h, frames) {
+        const image = document.createElement('img'); // <img>
+
+        const sprite = {
+            dom: image,
+            width: w,
+            height: h,
+            frames: frames,
+            loaded: false,
+            num: 1
+        };
+        image.onload = function() {
+            sprite.loaded = true;
+        };
+        image.src = path;
+
+        return sprite;
+    }
+
+    function gameEvents() {
+        document.body.onkeydown = function(event) {
+            switch (+event.keyCode) {
+                case 37: // left
+                    direction = 'LEFT';
+                    break;
+                case 39: // right
+                    direction = 'RIGHT';
+                    break;
+                case 38: // up
+                    y -= 10;
+                    break;
+                case 40: // down
+                    y += 10;
+                    break;
+                case 188: // up
+                    speed--;
+                    break;
+                case 190: // down
+                    speed++;
+                    break;
+            }
+        };
+    }
+
+    function gameCanvasInit() {
+        // resize the canvas to fill browser window dynamically
+        window.addEventListener('resize', resizeCanvas, false);
+
+        function gs(id) {
+            const p = getElem(id);
+            return p.currentStyle || window.getComputedStyle(p);
+        }
+
+        function resizeCanvas() {
+            const c = getElem('game');
+            c.width = window.innerWidth - 18;
+            c.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+    }
+
+</script>
+</body>
+</html>

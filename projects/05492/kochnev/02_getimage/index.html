@@ -1,0 +1,19 @@
+<html lang="en">
+<head>
+    <title>Get image</title>
+</head>
+<body align="center">
+<h1>Get image</h1>
+<img src="https://via.placeholder.com/1024" id="leo">
+<hr>
+<button onclick="getImage()">Get image</button>
+<script>
+    function ge(id) {
+        return document.getElementById(id);
+    }
+    function getImage() {
+        ge('leo').setAttribute('src', 'https://picsum.photos/1024/768');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Hello Canvas</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf8">
+</head>
+<body>
+<canvas id="game" width="750" height="250"></canvas>
+<button onclick="drawSquare();">Draw</button>
+<script>
+    function getCanvas(id) {
+        return document.getElementById(id);
+    }
+    function drawSquare() {
+        const cv = getCanvas('game');
+        const canvas = cv.getContext('2d');
+        canvas.beginPath();
+        canvas.rect(100,100,200,150)
+        canvas.fillStyle='orange';
+        canvas.fill();
+        canvas.stroke();
+    }
+</script>
+</body>
+</html>
