@@ -30,10 +30,10 @@
     let direction = 'RIGHT';
 
 
-    const boy = loadImage('sprites.png', 108, 140, 8);
+    const boy = loadImage('sprites.png', 200, 200, 1);
 
     let x = 0, y = 100;
-    let speed = 15;
+    let speed = 10;
     const FPS = 15;
     const startTime = 0;
 
@@ -108,7 +108,7 @@
         drawImage(context, boy, x, y);
 
 
-        drawRect(context, 10, y+133, getElem('game').width-18, 10);
+        drawRect(context, 10, y+500, getElem('game').width-18, 10);
     }
 
 
@@ -121,7 +121,7 @@
     function drawImage(ctx, img, x, y) {
         img.num = (img.num >= img.frames) ? 1 : img.num+1;
 
-        yOffset = (direction === 'LEFT') ? 140 : 0;
+        yOffset = (direction === 'LEFT') ? 0 : 0;
 
         ctx.drawImage(img.dom, img.width*(img.num-1), yOffset, img.width, img.height, x, y, img.width, img.height);
     }
