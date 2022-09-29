@@ -35,7 +35,6 @@
     let x = 0, y = 100;
     let speed = 10;
     const FPS = 15;
-    const startTime = 0;
 
     function gameStart() {
         gameCanvasInit();
@@ -99,15 +98,10 @@
             }
         }
 
-
         getElem('x').innerHTML = x;
         getElem('speed').innerHTML = speed;
         getElem('fps').innerHTML = FPS;
-
-
         drawImage(context, boy, x, y);
-
-
         drawRect(context, 10, y+500, getElem('game').width-18, 10);
     }
 
@@ -171,13 +165,7 @@
     }
 
     function gameCanvasInit() {
-        // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', resizeCanvas, false);
-
-        function gs(id) {
-            const p = getElem(id);
-            return p.currentStyle || window.getComputedStyle(p);
-        }
 
         function resizeCanvas() {
             const c = getElem('game');
