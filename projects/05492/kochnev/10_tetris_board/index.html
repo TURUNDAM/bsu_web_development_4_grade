@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Tetris board</title>
+</head>
+<body>
+<div class="div_center">
+    <canvas id="tetris" width="700" height="700"></canvas>
+</div>
+<script>
+    const canvas = getElement("tetris");
+    const context = canvas.getContext("2d");
+
+    const padding = 4;
+    const lineWidth = 5;
+
+    const numberRows =  20;
+    const numberColumns = 10;
+
+    const heightRows = canvas.height / numberRows;
+    const widthColumns = canvas.width / numberColumns;
+
+    const block = {
+        x: padding,
+        y: padding,
+        w: widthColumns - padding,
+        h: heightRows - padding,
+        color: "green"
+    };
+
+    setInterval(tick, 1);
+
+    function tick() {
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+        drawBackground();
+        updatePositionBlock();
+        drawLines();
+    }
+
+    function drawBackground() {
+        fill(() => {
+            context.rect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = "red";
+        });
+
+        fill(() => {
+            context.rect(padding, padding, canvas.width-2*padding, canvas.height-2*padding);
+            context.fillStyle = "rgb(229,112,8)";
+        });
+    }
+
+    function drawLines() {
+        for (let i = 1; i < numberRows; i++) {
+            stroke(() => {
+                context.moveTo(0, heightRows * i);
+                context.lineTo(canvas.width, heightRows * i);
+                context.strokeStyle = "black";
+                context.lineWidth = lineWidth;
+            });
+        }
+
+        for (let i = 1; i < numberColumns; i++) {
+            stroke(() => {
+                context.moveTo(widthColumns * i, 0);
+                context.lineTo(widthColumns * i, canvas.height);
+                context.strokeStyle = "black";
+                context.lineWidth = lineWidth;
+            });
+        }
+    }
+
+    function updatePositionBlock() {
+        fill(() => {
+            context.rect(block.x, block.y, block.w, block.h);
+            context.fillStyle=block.color;
+        });
+    }
+
+    function moveUp() {
+        if (block.y - heightRows >= 0) {
+            block.y -= heightRows;
+        }
+    }
+
+    function moveDown() {
+        if (block.y + heightRows <= canvas.height) {
+            block.y += heightRows;
+        }
+    }
+
+    function moveLeft() {
+        if (block.x - widthColumns >= 0) {
+            block.x -= widthColumns;
+        }
+    }
+
+    function moveRight() {
+        if (block.x + widthColumns <= canvas.width) {
+            block.x += widthColumns;
+        }
+    }
+
+    document.addEventListener("keydown", function(event) {
+        switch(event.code) {
+            case "KeyW": moveUp(); break;
+            case "KeyS": moveDown(); break;
+            case "KeyA": moveLeft(); break;
+            case "KeyD": moveRight(); break;
+        }
+    });
+
+    function getElement(id) {
+        return document.getElementById(id);
+    }
+
+    function stroke(fn, params) {
+        context.beginPath();
+        fn(params);
+        context.stroke();
+        context.closePath();
+    }
+
+    function fill(fn, params) {
+        context.beginPath();
+        fn(params);
+        context.fill();
+        context.closePath();
+    }
+</script>
+</body>
+</html>
